@@ -396,7 +396,7 @@
                                     class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
                         </div>
                         <div class="row justify-content-center">
-                            <form class="col-12">
+                            <form>
                                 <div class="row">
                                     <div class="mx-2 col-2">
                                         <h6>Pickup and Delivery</h6>
@@ -457,7 +457,7 @@
                                 </div>
                                 <div id="stops-container"></div>
                                 <div class="dropoff-section col-12">
-                                    <div class="row">
+                                    <div class="row  mt-3">
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <h6>Delivery</h6>
@@ -513,7 +513,14 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="Rate">USD Rate<span style="color: red">*</span></label>
+                                            <input type="text" class="form-control" id="totalWeight" name="totalWeight"
+                                                placeholder="$$$$" />
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="trailer">Trailer<span style="color: red">*</span></label>
                                             <select class="form-control" id="trailer" name="trailer">
@@ -552,6 +559,67 @@
                                                 placeholder="Description"></textarea>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="row mx-1">
+                                    <div>
+                                        <h6>Contact Information</h6>
+                                        <hr />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h1>Contact Information</h1>
+
+                                        <div class="form-group">
+                                            <label for="name">Name:</label>
+                                            <input type="text" class="form-control" id="name"
+                                                placeholder="Enter your name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="company">Company:</label>
+                                            <input type="text" class="form-control" id="company"
+                                                placeholder="Enter your company" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="phone">Phone Number:</label>
+                                            <input type="tel" class="form-control" id="phone"
+                                                placeholder="Enter your phone number" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email:</label>
+                                            <input type="email" class="form-control" id="email"
+                                                placeholder="Enter your email" required>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h1>Contact Options</h1>
+                                        <div class="form-group">
+                                            <label for="contactOption">Select Existing Contact:</label>
+                                            <!-- Use a dropdown instead of a checkbox -->
+                                            <select class="form-control" id="contactOption">
+                                                <option value="">Select an existing contact</option>
+                                                <option value="contact1">Contact 1</option>
+                                                <option value="contact2">Contact 2</option>
+                                                <!-- Add more options as needed -->
+                                            </select>
+                                        </div>
+                                        <!-- Use this section if you want a checkbox -->
+                                        <!--
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="existingContact">
+                                            <label class="form-check-label" for="existingContact">Use existing contact</label>
+                                        </div>
+                                        -->
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end mt-4">
+                                    <button type="button" class="btn btn-primary ml-auto"
+                                        onclick="postContact()">Post</button>
+                                    <button type="button" class="btn btn-success ml-2"
+                                        onclick="postAndCreateAnother()">Post and Create Another One</button>
                                 </div>
                             </form>
                         </div>
@@ -632,15 +700,18 @@
     </script>
     <!-- ADD STOP BUTTON -->
     <script>
+        var stopCounter = 0; // Counter for unique identifiers
+    
         function addStop() {
+            stopCounter++;
             var stopsContainer = document.getElementById("stops-container");
             var stopSection = document.createElement("div");
             stopSection.className = "pickup-section col-12 d-flex";
             stopSection.innerHTML = `
-                <div class="row">
+                <div class="row mt-3">
                     <div class="col-4">
-                        <div class="form-group">
-                            <h6>Pickup</h6>
+                        <div class="form-group ">
+                            <h6>Stop ${stopCounter}</h6>
                             <input type="text" class="form-control" placeholder="Pickup Location" />
                             <button type="button" class="btn btn-danger my-3" onclick="removeStop(this)">Delete Stop</button>
                             <hr />
@@ -649,15 +720,13 @@
                     <div class="col-4">
                         <div class="form-group">
                             <h6>Pickup Earliest</h6>
-                            <div class="input-group date" id="pickupEarliest"
-                                data-target-input="nearest">
+                            <div class="input-group date" id="pickupEarliestDatetime${stopCounter}" data-target-input="nearest">
                                 <input type="text" class="form-control datetimepicker-input"
-                                    data-target="#pickupEarliest"
+                                    data-target="#pickupEarliestDatetime${stopCounter}"
                                     placeholder="MM/DD/YYYY HH:mm AM/PM" />
-                                <div class="input-group-append" data-target="#pickupEarliest"
+                                <div class="input-group-append" data-target="#pickupEarliestDatetime${stopCounter}"
                                     data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i>
-                                    </div>
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>
                             <hr>
@@ -666,9 +735,11 @@
                     <div class="col-4">
                         <div class="form-group">
                             <label for="pickupLatest">Pickup Latest<span style="color: red;">*</span></label>
-                            <div class="input-group date" id="pickupLatest" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input" data-target="#pickupLatest" placeholder="MM/DD/YYYY HH:MM AM/PM" />
-                                <div class="input-group-append" data-target="#pickupLatest" data-toggle="datetimepicker">
+                            <div class="input-group date" id="pickupLatestDatetime${stopCounter}" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input"
+                                    data-target="#pickupLatestDatetime${stopCounter}" placeholder="MM/DD/YYYY HH:MM AM/PM" />
+                                <div class="input-group-append" data-target="#pickupLatestDatetime${stopCounter}"
+                                    data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>
@@ -678,14 +749,26 @@
                 </div>
             `;
             stopsContainer.appendChild(stopSection);
+    
+            // Initialize datetime pickers for the newly added stop
+            $(`#pickupEarliestDatetime${stopCounter}, #pickupLatestDatetime${stopCounter}`).datetimepicker({
+                format: 'MM/DD/YYYY HH:mm',
+                autoclose: true,
+                todayHighlight: true,
+                startDate: moment(),
+                icons: {
+                    time: 'far fa-clock'
+                }
+            });
         }
-
+    
         function removeStop(button) {
             var stopSection = button.closest(".pickup-section");
             var stopsContainer = document.getElementById("stops-container");
             stopsContainer.removeChild(stopSection);
         }
     </script>
+
     <script>
         $(document).ready(function () {
             $(".table-row").click(function () {
